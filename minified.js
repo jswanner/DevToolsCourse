@@ -1,0 +1,1 @@
+(function(){var b=function(e){var a=null.toString();alert('You clicked the button!');return false};var c=function(e){var a=document.getElementById('clickme');a.addEventListener('click',b,false)};})();
