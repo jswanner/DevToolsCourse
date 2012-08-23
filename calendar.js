@@ -1,5 +1,5 @@
 (function() {
-  window.events = [
+  var events = [
     {title: 'Breakfast with Jesica', hour: 8, minute: 15},
     {title: 'Team Standup', hour: 10, minute: 0},
     {title: 'Meeting with Gregg', hour: 10, minute: 30},
