@@ -1,0 +1,38 @@
+ol {
+  list-style-type: none;
+  padding-left: 1em;
+}
+li {
+  border-top: 1px solid black;
+  padding-bottom: .2em;
+}
+#calendar {
+  width: 600px;
+}
+#controlls {
+  padding-left: 1em;
+}
+.prev {
+  float: left;
+}
+.current {
+  display: block;
+  font-size: larger;
+  font-weight: bold;
+  text-align: center;
+}
+.next {
+  float: right;
+}
+.hour:last-child {
+  border-bottom: 1px solid black;
+}
+.hour-events {
+  padding-left: 35px;
+}
+.event:first-child {
+  border-top: 0 none;
+}
+.event:last-child {
+  padding-bottom: 0;
+}
