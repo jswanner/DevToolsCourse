@@ -70,14 +70,12 @@
   };
   Calendar.ControlsView = function(date) {
     this.date = date;
-    this.nextDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-    this.prevDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
     this.render = function() {
       var curr, elem, next, prev;
       elem = createElement('div', null, {id: 'controls'});
-      prev = createElement('a', this.prevDate.toDateString(), {className: 'prev', href: '#'});
+      prev = createElement('a', decrementDate(this.date).toDateString(), {className: 'prev', href: '#'});
       elem.appendChild(prev);
-      next = createElement('a', this.nextDate.toDateString(), {className: 'next', href: '#'});
+      next = createElement('a', incrementDate(this.date).toDateString(), {className: 'next', href: '#'});
       elem.appendChild(next);
       curr = createElement('span', this.date.toDateString(), {className: 'current'});
       elem.appendChild(curr);
@@ -88,7 +86,7 @@
     this.hours = hours;
     this.render = function() {
       var elem, i, length;
-      elem = createElement('ol', null, {className: 'hours'});
+      elem = createElement('ol', null, {id: 'hours'});
       for (i = 0, length = this.hours.length; i < length; i++) {
         elem.appendChild(new Calendar.HourView(this.hours[i]).render());
       }
@@ -101,7 +99,7 @@
       var elem, i, length, ol;
       elem = createElement('li', null, {className: 'hour'});
       elem.appendChild(createElement('span', hour.asText()));
-      ol = createElement('ol', null, {className: 'hour-events'});
+      ol = createElement('ol', null, {className: 'events'});
       for (i = 0, length = this.hour.events.length; i < length; i++) {
         ol.appendChild(new Calendar.EventView(this.hour.events[i]).render());
       }
@@ -115,17 +113,23 @@
       return createElement('li', this.event.asText(), {className: 'event'});
     };
   };
-  createElement = function(type, text, attributes) {
+  var createElement = function(type, text, attributes) {
     var elem = document.createElement(type);
-    if (text) { elem.appendChild(createTextNode(text)) }
+    if (text) { elem.appendChild(createTextNode(text)); }
     for (key in attributes) { elem[key] = attributes[key]; }
     return elem;
   };
-  createTextNode = function(text) {
+  var createTextNode = function(text) {
     return document.createTextNode(text);
   };
-  getElementById = function(id) {
+  var getElementById = function(id) {
     return document.getElementById(id);
   }
+  var decrementDate = function(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+  };
+  var incrementDate = function(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+  };
   document.addEventListener('DOMContentLoaded', Calendar.init, false);
 })();

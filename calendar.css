@@ -4,7 +4,7 @@ ol {
 }
 li {
   border-top: 1px solid black;
-  padding-bottom: .2em;
+  padding: .1em 0;
 }
 #calendar {
   width: 600px;
@@ -27,8 +27,8 @@ li {
 .hour:last-child {
   border-bottom: 1px solid black;
 }
-.hour-events {
-  padding-left: 35px;
+.events {
+  padding-left: 2em;
 }
 .event:first-child {
   border-top: 0 none;
