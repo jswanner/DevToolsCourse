@@ -5,7 +5,8 @@
     {title: 'Meeting with Gregg', hour: 10, minute: 30},
     {title: 'Lunch with Sean', hour: 11, minute: 45}
   ];
-  var Calendar = function() {
+  var Calendar = function(date) {
+    this.date = date;
     this.hours = [];
     var i = 0;
 
@@ -14,21 +15,33 @@
     }
   };
   Calendar.prototype.loadEvents = function(events) {
-    var event, e, i;
-    var length = events.length;
-
-    for (i = 0; i < length; i++) {
+    var e, event, i, length;
+    for (i = 0, length = events.length; i < length; i++) {
       e = events[i];
       event = new Calendar.Event(e.title, e.hour, e.minute);
       this.hours[e.hour].events.push(event);
     }
   };
   Calendar.prototype.display = function() {
-    var view = new Calendar.CalendarView(this);
-    document.getElementById('hours').appendChild(view.cloneNode(true));
+    this.displayControls();
+    this.displayCalendar();
+  };
+  Calendar.prototype.displayCalendar = function() {
+    var calendar, hours, view;
+    calendar = getElementById('calendar');
+    hours = getElementById('hours');
+    view = new Calendar.CalendarView(this.hours);
+    calendar.replaceChild(view.render().cloneNode(true), hours);
+  };
+  Calendar.prototype.displayControls = function() {
+    var calendar, controls, view;
+    calendar = getElementById('calendar');
+    controls = getElementById('controls');
+    view = new Calendar.ControlsView(this.date);
+    calendar.replaceChild(view.render().cloneNode(true), controls);
   };
   Calendar.init = function() {
-    var app = new Calendar;
+    var app = new Calendar(new Date);
     app.loadEvents(events);
     app.display();
     window.app = app
@@ -55,25 +68,40 @@
       return [h, m, ' - ', this.title].join('');
     };
   };
-  Calendar.CalendarView = function(app) {
-    var fragment, i, length;
-    fragment = document.createDocumentFragment();
-    for (i = 0, length = app.hours.length; i < length; i++) {
-      fragment.appendChild(new Calendar.HourView(app.hours[i]).render());
+  Calendar.ControlsView = function(date) {
+    this.date = date;
+    this.nextDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+    this.prevDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+    this.render = function() {
+      var curr, elem, next, prev;
+      elem = createElement('div', null, {id: 'controls'});
+      prev = createElement('a', this.prevDate.toDateString(), {className: 'prev', href: '#'});
+      elem.appendChild(prev);
+      next = createElement('a', this.nextDate.toDateString(), {className: 'next', href: '#'});
+      elem.appendChild(next);
+      curr = createElement('span', this.date.toDateString(), {className: 'current'});
+      elem.appendChild(curr);
+      return elem;
     }
-    return fragment;
+  };
+  Calendar.CalendarView = function(hours) {
+    this.hours = hours;
+    this.render = function() {
+      var elem, i, length;
+      elem = createElement('ol', null, {className: 'hours'});
+      for (i = 0, length = this.hours.length; i < length; i++) {
+        elem.appendChild(new Calendar.HourView(this.hours[i]).render());
+      }
+      return elem;
+    }
   };
   Calendar.HourView = function(hour) {
     this.hour = hour;
     this.render = function() {
-      var elem, i, length, ol, span;
-      elem = document.createElement('li');
-      elem.className = 'hour';
-      span = document.createElement('span');
-      span.appendChild(document.createTextNode(hour.asText()));
-      elem.appendChild(span);
-      ol = document.createElement('ol');
-      ol.className = 'hour-events';
+      var elem, i, length, ol;
+      elem = createElement('li', null, {className: 'hour'});
+      elem.appendChild(createElement('span', hour.asText()));
+      ol = createElement('ol', null, {className: 'hour-events'});
       for (i = 0, length = this.hour.events.length; i < length; i++) {
         ol.appendChild(new Calendar.EventView(this.hour.events[i]).render());
       }
@@ -84,12 +112,20 @@
   Calendar.EventView = function(event) {
     this.event = event;
     this.render = function() {
-      var elem;
-      elem = document.createElement('li');
-      elem.className = 'event';
-      elem.appendChild(document.createTextNode(this.event.asText()));
-      return elem;
+      return createElement('li', this.event.asText(), {className: 'event'});
     };
   };
+  createElement = function(type, text, attributes) {
+    var elem = document.createElement(type);
+    if (text) { elem.appendChild(createTextNode(text)) }
+    for (key in attributes) { elem[key] = attributes[key]; }
+    return elem;
+  };
+  createTextNode = function(text) {
+    return document.createTextNode(text);
+  };
+  getElementById = function(id) {
+    return document.getElementById(id);
+  }
   document.addEventListener('DOMContentLoaded', Calendar.init, false);
 })();
